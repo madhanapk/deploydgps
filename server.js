@@ -1,0 +1,39 @@
+// require deployd
+var deployd = require('deployd');
+
+// configure database etc. 
+var server = deployd({
+  socketIo: {
+        options: { transports : ['xhr-polling'] }
+    },
+  port: process.env.PORT || 5000,
+  env: 'production',
+  db: {
+    host: 'ds023448.mlab.com',
+    port: 23448,
+    name: 'deploydgps',
+    credentials: {
+      username: 'deploydgps',
+      password: 'deploydgps123'
+    }
+  }
+});
+
+// heroku requires these settings for sockets to work
+//server.sockets.manager.settings.transports = ["xhr-polling"];
+
+// start the server
+server.listen();
+
+// debug
+server.on('listening', function() {
+  console.log("Server is listening on port: " + process.env.PORT);
+});
+
+// Deployd requires this
+server.on('error', function(err) {
+  console.error(err);
+  process.nextTick(function() { // Give the server a chance to return an error
+    process.exit();
+  });
+});
